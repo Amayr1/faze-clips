@@ -1,0 +1,10 @@
+import {env} from 'cloudflare:workers';
+import {database,bucket} from './community';
+import {uploadPostRequest} from './upload-post-client.mjs';
+import {createPublisherService} from './publisher-service.mjs';
+export {PROVIDER} from './publisher-service.mjs';
+export {NETWORKS} from './publisher-contract.mjs';
+const config=()=>env as unknown as {UPLOAD_POST_API_KEY?:string};
+export const publishingConfigured=()=>!!config().UPLOAD_POST_API_KEY;
+const service=createPublisherService({database,bucket,configured:publishingConfigured,request:(path:string,body?:unknown,idempotencyKey?:string)=>uploadPostRequest(config().UPLOAD_POST_API_KEY,path,body,{idempotencyKey})});
+export const {linkedAccounts,linkSession,dispatchPost,syncPublications}=service;

@@ -1,0 +1,848 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "FaZe Clips — Mock Creator Upload API",
+    "version": "0.1.0-draft",
+    "description": "PROPOSED CONTRACT ONLY. No endpoints or API-key authentication are implemented by this reference. All examples are fictional. The reserved example.com server is a placeholder. Import this specification into a mock tool to generate example responses. Not an official FaZe or Kickbot integration."
+  },
+  "servers": [
+    {
+      "url": "https://clips.example.com/api/v1",
+      "description": "Placeholder only; not a live service"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Clips",
+      "description": "Creator-owned uploads from external tools"
+    }
+  ],
+  "security": [
+    {
+      "CreatorToken": []
+    }
+  ],
+  "paths": {
+    "/clips": {
+      "post": {
+        "tags": [
+          "Clips"
+        ],
+        "operationId": "uploadClip",
+        "summary": "Upload a video as the connected creator",
+        "description": "Mock proposal. Public upload only. Owner and display name come from the creator token. Does not download a remote URL, add likes, or publish to external social platforms. Validate file signature, quota and all metadata before publication. Token must grant clips:write.",
+        "x-required-scopes": [
+          "clips:write"
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "description": "Unique operation key, 16–128 ASCII letters, digits, underscore or hyphen. Scoped to token creator + POST /clips. Retain successful result for 24 hours. Same key and identical file bytes + metadata replay the original 201 result without another upload. Changed payload returns 409. Validation errors do not reserve the key.",
+            "schema": {
+              "type": "string",
+              "minLength": 16,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9_-]+$"
+            },
+            "example": "kickbot-event-20261115-001"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/UploadRequest"
+              },
+              "encoding": {
+                "video": {
+                  "contentType": "video/mp4, video/webm, video/quicktime"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Published clip, or the original successful result on idempotent replay. Values shown are mock fixtures.",
+            "headers": {
+              "Location": {
+                "description": "Relative API resource location.",
+                "schema": {
+                  "type": "string"
+                },
+                "example": "/api/v1/clips/3e519168-5ee9-4cb4-b8c6-706b37cb79f6"
+              },
+              "Idempotency-Replayed": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "true",
+                    "false"
+                  ]
+                },
+                "example": "false"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClipEnvelope"
+                },
+                "example": {
+                  "data": {
+                    "id": "3e519168-5ee9-4cb4-b8c6-706b37cb79f6",
+                    "canonicalClipId": "upload:3e519168-5ee9-4cb4-b8c6-706b37cb79f6",
+                    "status": "published",
+                    "title": "Last-second winner",
+                    "description": "The squad lost it.",
+                    "game": "EA SPORTS FC",
+                    "creator": {
+                      "displayName": "Demo Creator"
+                    },
+                    "source": {
+                      "platform": "kick",
+                      "clipUrl": "https://kick.com/demo/clips/clip_demo",
+                      "streamUrl": "https://kick.com/demo"
+                    },
+                    "url": "https://clips.example.com/#clip=3e519168-5ee9-4cb4-b8c6-706b37cb79f6",
+                    "createdAt": "2026-11-15T17:00:00Z",
+                    "metrics": {
+                      "fazeLikes": 0,
+                      "comments": 0
+                    }
+                  },
+                  "requestId": "req_mock_upload_001"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid fields or cursor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, invalid, expired or revoked token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Token does not grant the required scope.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Idempotency key reused with a different request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Video exceeds 25 MiB or request exceeds 26 MiB.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported media type or file signature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Request or accepted-upload quota exceeded.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds until retry is allowed.",
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Storage or processing unavailable; retry with the same idempotency key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Clips"
+        ],
+        "operationId": "listMyClips",
+        "summary": "List this connected creator’s uploads",
+        "description": "Ownership is derived from token; no arbitrary creator ID is accepted. Stable cursor pagination binds the creator and selected sort. This is not global creator search. Token must grant clips:read.",
+        "x-required-scopes": [
+          "clips:read"
+        ],
+        "parameters": [
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "new",
+                "hot",
+                "top"
+              ],
+              "default": "new"
+            },
+            "description": "new: createdAt descending. top: first-party FaZe hearts descending. hot: time-decayed first-party FaZe hearts. Stable ties use createdAt descending, then ID."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Opaque nextCursor from the previous response; do not construct or reuse with a changed sort."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Owned uploads; a null nextCursor means the collection is exhausted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClipPage"
+                },
+                "example": {
+                  "data": [
+                    {
+                      "id": "3e519168-5ee9-4cb4-b8c6-706b37cb79f6",
+                      "canonicalClipId": "upload:3e519168-5ee9-4cb4-b8c6-706b37cb79f6",
+                      "status": "published",
+                      "title": "Last-second winner",
+                      "description": "The squad lost it.",
+                      "game": "EA SPORTS FC",
+                      "creator": {
+                        "displayName": "Demo Creator"
+                      },
+                      "source": {
+                        "platform": "kick",
+                        "clipUrl": "https://kick.com/demo/clips/clip_demo",
+                        "streamUrl": "https://kick.com/demo"
+                      },
+                      "url": "https://clips.example.com/#clip=3e519168-5ee9-4cb4-b8c6-706b37cb79f6",
+                      "createdAt": "2026-11-15T17:00:00Z",
+                      "metrics": {
+                        "fazeLikes": 0,
+                        "comments": 0
+                      }
+                    }
+                  ],
+                  "nextCursor": null,
+                  "requestId": "req_mock_list_001"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid fields or cursor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, invalid, expired or revoked token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Token does not grant the required scope.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Request or accepted-upload quota exceeded.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds until retry is allowed.",
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Storage or processing unavailable; retry with the same idempotency key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/clips/{clipId}": {
+      "parameters": [
+        {
+          "name": "clipId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "example": "3e519168-5ee9-4cb4-b8c6-706b37cb79f6"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Clips"
+        ],
+        "operationId": "getMyClip",
+        "summary": "Get an owned upload and first-party engagement",
+        "description": "Token must grant clips:read. Clip IDs are UUIDs; canonicalClipId is the upload:UUID identity used by the community. Metrics are read-only and never supplied by a bot.",
+        "x-required-scopes": [
+          "clips:read"
+        ],
+        "responses": {
+          "200": {
+            "description": "Owned published clip; fictional example.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClipEnvelope"
+                },
+                "example": {
+                  "data": {
+                    "id": "3e519168-5ee9-4cb4-b8c6-706b37cb79f6",
+                    "canonicalClipId": "upload:3e519168-5ee9-4cb4-b8c6-706b37cb79f6",
+                    "status": "published",
+                    "title": "Last-second winner",
+                    "description": "The squad lost it.",
+                    "game": "EA SPORTS FC",
+                    "creator": {
+                      "displayName": "Demo Creator"
+                    },
+                    "source": {
+                      "platform": "kick",
+                      "clipUrl": "https://kick.com/demo/clips/clip_demo",
+                      "streamUrl": "https://kick.com/demo"
+                    },
+                    "url": "https://clips.example.com/#clip=3e519168-5ee9-4cb4-b8c6-706b37cb79f6",
+                    "createdAt": "2026-11-15T17:00:00Z",
+                    "metrics": {
+                      "fazeLikes": 0,
+                      "comments": 0
+                    }
+                  },
+                  "requestId": "req_mock_get_001"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, invalid, expired or revoked token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Token does not grant the required scope.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Clip not found or not owned by this token’s creator.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Request or accepted-upload quota exceeded.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds until retry is allowed.",
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Storage or processing unavailable; retry with the same idempotency key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Clips"
+        ],
+        "operationId": "deleteMyClip",
+        "summary": "Delete an owned upload",
+        "description": "Token must grant clips:write. Removes the platform upload and its comments/hearts. Does not delete copies on Kick, Twitch, Instagram, TikTok or any external service. A missing/deleted clip returns 404.",
+        "x-required-scopes": [
+          "clips:write"
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted; empty response body."
+          },
+          "401": {
+            "description": "Missing, invalid, expired or revoked token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Token does not grant the required scope.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Clip not found or not owned by this token’s creator.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Request or accepted-upload quota exceeded.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds until retry is allowed.",
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Storage or processing unavailable; retry with the same idempotency key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "CreatorToken": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "opaque creator token",
+        "description": "Proposed token issued after creator approval. Scopes: clips:read and/or clips:write. Token binds one creator and one integration; use HTTPS and keep it server-side. No token issuance endpoint currently exists. Never substitute a ChatGPT cookie, Kick credential or social OAuth token."
+      }
+    },
+    "schemas": {
+      "UploadRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "video",
+          "title",
+          "game"
+        ],
+        "properties": {
+          "video": {
+            "type": "string",
+            "format": "binary",
+            "description": "16 bytes–26,214,400 bytes (25 MiB). MP4, WebM or MOV with matching signature. Entire multipart body max 27,262,976 bytes (26 MiB). Browser codec support still applies."
+          },
+          "title": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 100,
+            "example": "Last-second winner"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 1000,
+            "default": "",
+            "example": "The squad lost it."
+          },
+          "game": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80,
+            "description": "Non-whitespace game/category, including IRL or Just Chatting.",
+            "example": "EA SPORTS FC"
+          },
+          "sourcePlatform": {
+            "type": "string",
+            "enum": [
+              "original",
+              "kick",
+              "twitch",
+              "youtube"
+            ],
+            "default": "original",
+            "description": "Attribution only; does not establish ownership or connect an account."
+          },
+          "sourceClipUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "Optional HTTPS source clip page. Must match sourcePlatform and its canonical Kick/Twitch/YouTube domain. Not accepted for original. Metadata only; not fetched as media."
+          },
+          "streamUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "Optional HTTPS creator channel page on kick.com, twitch.tv or youtube.com. Not proof that the creator is live."
+          },
+          "sourceVideoUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "Optional validated HTTPS full-video URL: YouTube watch/short URL, Twitch /videos/ID with optional t offset, or Kick /CHANNEL/videos/UUID."
+          },
+          "challengeId": {
+            "type": "string",
+            "maxLength": 100,
+            "description": "Optional active, server-validated community spotlight ID; omission means no spotlight. Active IDs are supplied by the app; this mock does not promise that a particular campaign remains active."
+          }
+        }
+      },
+      "Clip": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "canonicalClipId",
+          "status",
+          "title",
+          "description",
+          "game",
+          "creator",
+          "source",
+          "url",
+          "createdAt",
+          "metrics"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "canonicalClipId": {
+            "type": "string",
+            "pattern": "^upload:[0-9a-f-]{36}$"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "published"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "game": {
+            "type": "string"
+          },
+          "creator": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "displayName"
+            ],
+            "properties": {
+              "displayName": {
+                "type": "string",
+                "description": "Server-resolved public display name; never a private owner ID or email."
+              }
+            }
+          },
+          "source": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "platform"
+            ],
+            "properties": {
+              "platform": {
+                "type": "string",
+                "enum": [
+                  "original",
+                  "kick",
+                  "twitch",
+                  "youtube"
+                ]
+              },
+              "clipUrl": {
+                "type": "string",
+                "format": "uri"
+              },
+              "streamUrl": {
+                "type": "string",
+                "format": "uri"
+              },
+              "videoUrl": {
+                "type": "string",
+                "format": "uri"
+              }
+            }
+          },
+          "challengeId": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "metrics": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "fazeLikes",
+              "comments"
+            ],
+            "properties": {
+              "fazeLikes": {
+                "type": "integer",
+                "minimum": 0,
+                "readOnly": true,
+                "description": "Independent first-party likes. External source views/likes are not included."
+              },
+              "comments": {
+                "type": "integer",
+                "minimum": 0,
+                "readOnly": true
+              }
+            }
+          }
+        }
+      },
+      "ClipEnvelope": {
+        "type": "object",
+        "required": [
+          "data",
+          "requestId"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Clip"
+          },
+          "requestId": {
+            "type": "string"
+          }
+        }
+      },
+      "ClipPage": {
+        "type": "object",
+        "required": [
+          "data",
+          "nextCursor",
+          "requestId"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Clip"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          },
+          "requestId": {
+            "type": "string"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": [
+          "error",
+          "requestId"
+        ],
+        "properties": {
+          "error": {
+            "type": "object",
+            "required": [
+              "code",
+              "message"
+            ],
+            "properties": {
+              "code": {
+                "type": "string",
+                "enum": [
+                  "invalid_request",
+                  "unauthorized",
+                  "insufficient_scope",
+                  "not_found",
+                  "idempotency_conflict",
+                  "payload_too_large",
+                  "unsupported_media_type",
+                  "rate_limited",
+                  "service_unavailable"
+                ]
+              },
+              "message": {
+                "type": "string"
+              },
+              "fields": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "requestId": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "error": {
+            "code": "invalid_request",
+            "message": "Check your clip metadata.",
+            "fields": {
+              "title": "Use 3–100 characters."
+            }
+          },
+          "requestId": "req_mock_error_001"
+        }
+      }
+    }
+  },
+  "x-mock": true,
+  "x-proposed-limits": {
+    "requestsPerMinutePerCreator": 60,
+    "successfulUploadsPerDayPerCreator": 20,
+    "idempotencyRetentionHours": 24
+  }
+}

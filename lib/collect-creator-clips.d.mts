@@ -1,0 +1,1 @@
+export function collectCreatorClips(options:{loadPage:(cursor:string|null,signal?:AbortSignal)=>Promise<any>;signal?:AbortSignal;onProgress?:(progress:{clips:number;pages:number})=>void}):Promise<{clips:any[];sources:any[];links:any[];errors:string[];pages:number;webConnected:boolean;coverage:string;complete:boolean;nextCursor:null}>;

@@ -1,0 +1,108 @@
+{
+  "source": "https://fazeclan.com/pages/people",
+  "checkedAt": "2026-11-15T17:38:22.258Z",
+  "members": [
+    {
+      "id": "faze-broky",
+      "name": "FaZe broky",
+      "game": "CS",
+      "role": "CS2 Player, AWPer"
+    },
+    {
+      "id": "faze-karrigan",
+      "name": "FaZe karrigan",
+      "game": "CS",
+      "role": "CS2 Player, In-Game Leader"
+    },
+    {
+      "id": "faze-frozen",
+      "name": "FaZe frozen",
+      "game": "CS",
+      "role": "CS2 Player, Rifler"
+    },
+    {
+      "id": "faze-twistzz",
+      "name": "FaZe Twistzz",
+      "game": "CS",
+      "role": "CS2 Player, Rifler"
+    },
+    {
+      "id": "faze-jcobbb",
+      "name": "FaZe jcobbb",
+      "game": "CS",
+      "role": "CS2 Player, Rifler"
+    },
+    {
+      "id": "faze-neo",
+      "name": "FaZe NEO",
+      "game": "CS",
+      "role": "CS2 Coach"
+    },
+    {
+      "id": "faze-cyber",
+      "name": "FaZe Cyber",
+      "game": "R6",
+      "role": "Rainbow Six Siege Player"
+    },
+    {
+      "id": "faze-soulz1",
+      "name": "FaZe soulz1",
+      "game": "R6",
+      "role": "Rainbow Six Siege Player"
+    },
+    {
+      "id": "faze-vitaking",
+      "name": "FaZe VITAKING",
+      "game": "R6",
+      "role": "Rainbow Six Siege Player"
+    },
+    {
+      "id": "faze-kds",
+      "name": "FaZe KDS",
+      "game": "R6",
+      "role": "Rainbow Six Siege Player"
+    },
+    {
+      "id": "faze-handyy",
+      "name": "FaZe Handyy",
+      "game": "R6",
+      "role": "Rainbow Six Siege Player"
+    },
+    {
+      "id": "faze-rafadell",
+      "name": "FaZe Rafadell",
+      "game": "R6",
+      "role": "Rainbow Six Siege Coach"
+    },
+    {
+      "id": "faze-fexx",
+      "name": "FaZe Fexx",
+      "game": "PUBG",
+      "role": "PUBG Player, Competitive"
+    },
+    {
+      "id": "faze-gustav",
+      "name": "FaZe Gustav",
+      "game": "PUBG",
+      "role": "PUBG Player, Competitive"
+    },
+    {
+      "id": "faze-vard",
+      "name": "FaZe vard",
+      "game": "PUBG",
+      "role": "PUBG Player, Competitive"
+    },
+    {
+      "id": "faze-sparg0",
+      "name": "FaZe Sparg0",
+      "game": "SMASH",
+      "role": "Super Smash Bros Player, Competitive"
+    },
+    {
+      "id": "faze-zoomaa",
+      "name": "FaZe ZooMaa",
+      "game": "CALL OF DUTY",
+      "role": "Call of Duty Player, Content Creator"
+    }
+  ]
+}

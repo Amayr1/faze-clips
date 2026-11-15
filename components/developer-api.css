@@ -1,0 +1,43 @@
+.developer-api{padding:60px 0 65px;scroll-margin-top:100px}
+.developer-api .section-heading{gap:20px;flex-wrap:wrap}
+.developer-api .eyebrow{display:flex;align-items:center;gap:8px}
+.developer-api h2{font:400 clamp(34px,4vw,53px)/1.15 var(--font-display);margin-top:12px}
+.api-demo-badge{border:1px solid #e4002b;color:#ffb6c4;padding:9px 12px;font-size:10px;letter-spacing:1px}
+.api-intro{font-size:14px;line-height:1.8;color:#ccc;max-width:780px;margin:20px 0 28px}
+.api-console-grid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);border:1px solid #444;background:#171717}
+.api-key-panel,.api-reference-panel{min-width:0;padding:30px}
+.api-key-panel{border-right:1px solid #444;background:linear-gradient(145deg,#29141a,#171717 65%)}
+.api-key-panel h3{font:400 32px/1.2 var(--font-display);margin:18px 0}
+.api-key-panel>p{font-size:13px;line-height:1.8;color:#ccc}
+.api-key-label{display:block;margin:23px 0 8px;font-size:12px;font-weight:700}
+.api-key-input{display:flex;align-items:center;gap:6px;border:1px solid #666;background:#111;padding:6px 8px;margin-bottom:16px}
+.api-key-input input{width:100%;min-width:0;border:0;background:transparent;font:12px/1.8 monospace;color:#fff;padding:9px 2px}
+.developer-api button:disabled{opacity:.45;cursor:not-allowed}
+.developer-api .button{min-height:40px;font-size:11px;gap:8px}
+.api-header-label{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:25px 0 10px;font-size:9px;letter-spacing:.7px;color:#ccc}
+.api-header-label .text-button{font-size:10px;letter-spacing:0;gap:6px}
+.api-code{max-width:100%;white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.8 monospace;border:1px solid #414141;background:#0c0c0c;color:#eee;padding:15px;overflow:auto;text-transform:none;letter-spacing:0}
+.api-request{white-space:pre;max-height:300px}
+.api-scope-tags{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.api-scope-tags>span{font:11px monospace;padding:5px 7px;background:#292929;color:#ccc}
+.api-scope-tags>span:last-child{background:transparent;font:11px var(--font-body);padding-inline:0}
+.api-key-panel .api-boundary{border-top:1px solid #484848;padding-top:20px;margin-top:23px;font-size:12px;color:#ffb6c4}
+.api-key-panel .api-status{min-height:44px;margin-top:15px;color:#ddd;font-size:12px}
+.api-base{margin:20px 0;display:flex;flex-direction:column;gap:9px}
+.api-base>span{font-size:9px;letter-spacing:1px;color:#bbb}
+.api-base>code{font-size:13px;overflow-wrap:anywhere}
+.api-endpoints{overflow-x:auto}
+.api-endpoints table{width:100%;border-collapse:collapse;text-align:left}
+.api-endpoints th{font-size:10px;color:#bbb;padding:10px 8px;border-bottom:1px solid #555}
+.api-endpoints td{padding:13px 8px;border-bottom:1px solid #383838;font-size:10px;vertical-align:middle}
+.api-endpoints td code{font-size:12px;white-space:nowrap}
+.api-endpoints td small{display:block;font-size:11px;color:#bcbcbc;margin-top:5px;white-space:nowrap}
+.api-method{font:700 10px monospace;color:#ddd}
+.api-method.post{color:#ff9fb2}.api-method.delete{color:#ffb48a}
+.api-limits{font-size:11px;line-height:1.8;color:#bbb;margin:13px 0 19px}
+.api-response{margin-top:23px}.api-response>strong{font-size:10px;color:#ffb6c4;letter-spacing:1px}.api-response pre{margin-top:10px;max-height:320px}.api-response>small{display:block;font-size:11px;line-height:1.7;color:#bbb;margin-top:10px}
+.api-sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.api-mobile-link{display:none}
+@media(max-width:1050px){.site-header nav{gap:12px}.header-inner{gap:16px}.api-key-panel,.api-reference-panel{padding:24px}.api-console-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+@media(max-width:800px){.api-console-grid{grid-template-columns:1fr}.api-key-panel{border-right:0;border-bottom:1px solid #444}.developer-api{padding-block:40px}.developer-api .section-heading h2{font-size:36px}.site-header nav{gap:10px}}
+@media(max-width:500px){.api-mobile-link{display:inline-flex;align-items:center;justify-content:center;min-width:36px;min-height:36px;border:1px solid #666;font-size:11px;font-weight:700}.api-key-panel,.api-reference-panel{padding:22px 17px}.api-intro{font-size:13px}.api-key-input input{font-size:13px}.api-endpoints td{padding-inline:5px}.api-endpoints td code{font-size:11px}.api-header-label{align-items:flex-start;flex-wrap:wrap}.api-code{font-size:11px}.api-demo-badge{font-size:9px}}
